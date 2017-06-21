@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title> Socket. IO dynamically reloading CSS stylesheets</title>
+	<!--<link rel=" stylesheet" type=" text/css" href=" http://localhost:8000/static/header.css" />-->
+	<link rel=" stylesheet" type=" text/css" href="http://localhost:8000/static/styles.css" />
+
+	<script src="/socket.io/socket.io.js"></script>
+	<script>
+		window.onload = function () {
+			var socket = io.connect()
+			socket.on('reload', function () {
+				window.location.reload()
+			})
+			socket.on('stylesheet', function (sheet) {
+				var link = document.createElement('link')
+				var head = document.getElementsByTagName('head')[0]
+				link.setAttribute('rel', 'stylesheet')
+				link.setAttribute('type', 'text/css')
+				link.setAttribute('href', sheet)
+				head.appendChild(link)
+			})
+		}
+	</script>
+</head>
+<body>
+	<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <script>
+        var svg = d3.select('body')
+                    .append('svg')
+                    .attr('width',1000)
+                    .attr('height',1000)
+        var circle1 = svg.append('circle')
+                   .attr('cy',100)
+                    .attr('cx',100)
+                    .attr('r',45)
+                    .style('fill','green')
+        circle1.transition()
+            .duration(2000)
+            .ease('elastic')
+           .attr('cy',400)
+            .attr('cx',200)
+        var circle2 = svg.append('circle')
+                        .attr('cy',100)
+                        .attr('cx',100)
+                         .attr('r',25)
+                         .style('fill','green')
+        circle2.transition()
+                .duration(5000)
+               
+               .ease('circle')
+                 .attr('cy',400)
+                .style('fill','blue')
+
+        var circle3 =  svg.append('circle')
+                        .attr('cy',100)
+                        .attr('cx',100)
+                         .attr('r',25)
+                         .style('fill','green')
+
+        circle3.transition()
+                .duration(2000) 
+                 .attr('cy',400)
+                 .ease('bounce')
+        
+
+    
+    
+    
+    </script>
+    
+</body>
+
+</html>

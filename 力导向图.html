@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    	<script src="/socket.io/socket.io.js"></script>
+	<script>
+		window.onload = function () {
+			var socket = io.connect()
+			socket.on('reload', function () {
+				window.location.reload()
+			})
+			socket.on('stylesheet', function (sheet) {
+				var link = document.createElement('link')
+				var head = document.getElementsByTagName('head')[0]
+				link.setAttribute('rel', 'stylesheet')
+				link.setAttribute('type', 'text/css')
+				link.setAttribute('href', sheet)
+				head.appendChild(link)
+			})
+		}
+	</script>
+</head>
+	<script src="js/d3.js" charset="utf-8"></script>
+<body>
+    
+<script>
+
+    var height =600;
+    var width = 1000
+    var nodes = [ { name: "桂林" }, { name: "广州" },
+              { name: "厦门" }, { name: "杭州" },
+              { name: "上海" }, { name: "青岛" },
+              { name: "天津" } ];
+ 
+ var edges = [ { source : 0 , target: 1 } , { source : 0 , target: 2 } ,
+               { source : 0 , target: 3 } , { source : 1 , target: 4 } ,
+               { source : 1 , target: 5 } , { source : 1 , target: 6 } ];
+
+    var force = d3.layout.force()  // 力向导图
+                    .nodes(nodes)   // 节点数组
+                    .links(edges)    //  连线数组
+                    .size([width,height]) // 指定作用域范围
+                    .linkDistance(150)  // 指定连接线长度
+                    .charge([-410])  // 相互之间的作用力
+
+    force.start()
+    console.log(nodes);
+    console.log(edges);
+
+    var svg =d3.select('body') 
+                .append('svg')
+                .attr('width',width)
+                .attr('height',height)
+    var svg_edges = svg.selectAll('line')   //  线条数据
+                        .data(edges)
+                        .enter()
+                        .append('line')
+                        .style("stroke","#ccc")
+                        .style("stroke-width",1);
+    var color = d3.scale.category20()  // 20 种颜色比例尺
+
+    var svg_nodes = svg.selectAll('circle')  // 节点 只确定了半径  和可拖动   ，未未确定  圆心位置
+                        .data(nodes)
+                        .enter()
+                        .append('circle')
+                        .attr('r',20)
+                        .style('fill',function(d,i){
+                            return color(i)
+                        })
+                        .call(force.drag)
+    
+    var svg_texts = svg.selectAll('text')
+                        .data(nodes)
+                        .enter()
+                        .append('text')
+                        .attr('fill','black')
+                        .attr("dx", 20)
+                        .attr("dy", 8)
+                        .text(function(d,i){
+                            return d.name
+                        })
+                        
+    force.on('tick',function(){
+        svg_edges
+            .attr('x1',function(d,i){
+                return d.source.x
+            })
+            .attr('y1',function(d,i){
+                return d.source.y
+            })
+            .attr("x2",function(d){
+                return d.target.x; 
+            })
+            .attr("y2",function(d){
+                return d.target.y; 
+            });
+        svg_nodes
+            .attr('cx',function(d,i){
+            return d.x
+            })
+            .attr('cy',function(d,i){
+                return  d.y
+            })
+        svg_texts
+            .attr('x',function(d){
+                return d.x
+            })
+            .attr('y',function(d){
+                return d.y
+            })
+    })
+
+</script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title> Socket. IO dynamically reloading CSS stylesheets</title>
+	<!--<link rel=" stylesheet" type=" text/css" href=" http://localhost:8000/static/header.css" />-->
+	<link rel=" stylesheet" type=" text/css" href="http://localhost:8000/static/styles.css" />
+
+	<script src="/socket.io/socket.io.js"></script>
+	<script>
+		window.onload = function () {
+			var socket = io.connect()
+			socket.on('reload', function () {
+				window.location.reload()
+			})
+			socket.on('stylesheet', function (sheet) {
+				var link = document.createElement('link')
+				var head = document.getElementsByTagName('head')[0]
+				link.setAttribute('rel', 'stylesheet')
+				link.setAttribute('type', 'text/css')
+				link.setAttribute('href', sheet)
+				head.appendChild(link)
+			})
+		}
+	</script>
+</head>
+<body>
+	<script src="/js/d3.js" charset="utf-8"></script>
+    <script>
+   	var dataset = [ 30 , 10 , 43 , 55 , 13 ];
+    var pie = d3.layout.pie()
+    var piedata = pie(dataset) 
+	
+var width = 400;
+		var height = 400;
+
+	var outerRadius = 150
+
+	var innerRadius = 0
+
+	var svg = d3.select('body')
+				.append('svg')
+				.attr('width',500)
+				.attr('height',400)
+
+	var arc = d3.svg.arc()            //定义了一个弧
+				.innerRadius(innerRadius)
+				.outerRadius(outerRadius)
+
+	var color = d3.scale.category10()  // 10种颜色的比例尺
+	var arcs = svg.selectAll('g')			// 找到g ，添加数据，不够自己增加g元素
+			.data(piedata)      //添加整理好的数据
+			.enter()
+			.append('g')
+			.attr("transform","translate("+ (500/2) +","+ (500/2) +")")
+	
+		arcs.append("path")
+			.attr("fill",function(d,i){
+				return color(i);
+			})
+			.attr("d",function(d){
+				return arc(d);
+			});
+		
+		arcs.append("text")
+			.attr("transform",function(d){
+				console.log(arc.centroid(d),d);
+				return "translate(" + arc.centroid(d) + ")";
+			})
+			.attr("text-anchor","middle")
+			.text(function(d){
+				return d.data;
+			});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </script>
+    
+</body>
+
+</html>
